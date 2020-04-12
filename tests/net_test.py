@@ -1,4 +1,4 @@
-from mtcnn.nets import PNet, RNet, FlattenTensorCustom
+from mtcnn.nets import ONet, PNet, RNet, FlattenTensorCustom
 import torch
 import numpy as np  
 from colorama import Fore

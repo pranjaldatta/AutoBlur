@@ -151,7 +151,7 @@ class ONet(nn.Module):
             ("conv4", nn.Conv2d(64,128,2)),
             ("prelu4", nn.PReLU(128)),
             ("flatten", FlattenTensorCustom()), 
-            ("conv5", nn.Linear(1152,256,2,1)),
+            ("conv5", nn.Linear(1152,256)),
             ("prelu5", nn.PReLU(256)),
 
         ]))     
