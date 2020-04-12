@@ -25,3 +25,6 @@ print("-"*50)
 
 rnet = RNet()
 rnet.summary()
+
+onet = ONet()
+onet.summary()
