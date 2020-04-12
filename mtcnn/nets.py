@@ -110,7 +110,7 @@ class RNet(nn.Module):
                 wts.data = torch.FloatTensor(self.weights[idx])
         except Exception as err:
 
-            print(Fore.RED+"ERROR: at loading onet weights: {}".format(err)+Fore.RESET)
+            print(Fore.RED+"ERROR: at loading rnet weights: {}".format(err)+Fore.RESET)
             exit()
     
     def summary(self):
@@ -122,8 +122,65 @@ class RNet(nn.Module):
 
     def forward(x):
         x = self.features(x)
-        prods = nn.Softmax(self.conv5_1(x), dim=1)
+
+        probs = nn.Softmax(self.conv5_1(x), dim=1)
+
         boxes = self.conv5_2(x)
         return probs, boxes    
 
 
+class ONet(nn.Module):
+
+     
+    def __init__(self):
+         
+        super(ONet, self).__init__()
+
+        self.features = nn.Sequential(OrderedDict([
+            ("conv1", nn.Conv2d(3, 32, 3, 1)),
+            ("prelu1", nn.PReLU(32)),
+            ("pool1", nn.MaxPool2d(3, 2, ceil_mode=True)),
+
+            ("conv2", nn.Conv2d(32, 64, 3, 1)),
+            ("prelu2", nn.PReLU(64)),
+            ("pool2", nn.MaxPool2d(3, 2, ceil_mode=True)),
+
+            ("conv3", nn.Conv2d(64, 64, 3)),
+
+            ("prelu3", nn.PReLU(64)),
+            ("pool3", nn.MaxPool2d(2, 2, ceil_mode=True)),
+
+            ("conv4", nn.Conv2d(64,128,2)),
+            ("prelu4", nn.PReLU(128)),
+            ("flatten", FlattenTensorCustom()), 
+            ("conv5", nn.Linear(1152,256)),
+            ("prelu5", nn.PReLU(256)),
+
+        ]))     
+          
+        self.conv6_1 = nn.Linear(256,2)   #prob of face in bb
+        self.conv6_2 = nn.Linear(256,4)   #box
+        self.conv6_3 = nn.Linear(256,10)  #facial landmarks
+
+        try:
+            self.weights = np.load(WEIGHTS_PATH+"onet.npy", allow_pickle=True)[()]
+            for idx, wts in self.named_parameters():
+                wts.data = torch.FloatTensor(self.weights[idx])
+        except Exception as err:
+            print(Fore.RED+"ERROR: at loading onet weights: {}".format(err)+Fore.RESET)
+            exit()
+    
+    def summary(self):
+        print("ONet Summary:")
+        print(self.features)
+        print("\n")
+        print(self.conv6_1)
+        print(self.conv6_2)
+        print(self.conv6_3)
+
+    def forward(x):
+        x = self.features(x)
+        probs = nn.Softmax(self.conv6_1(x), dim=1)
+        boxes = self.conv6_2(x)
+        points = self.conv6_3(x)
+        return probs, boxes, points   
