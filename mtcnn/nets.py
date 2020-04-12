@@ -73,7 +73,7 @@ class PNet(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        probs = nn.Softmax(self.conv4_1(x))  #holds probilities and box preds respec.
+        probs = nn.Softmax(self.conv4_1(x), dim=1) #ERROR PRONE  #holds probilities and box preds respec.
         boxes = self.conv4_2(x)
 
         return probs, boxes   
@@ -122,7 +122,7 @@ class RNet(nn.Module):
 
     def forward(x):
         x = self.features(x)
-        prods = nn.Softmax(self.conv5_1(x))
+        prods = nn.Softmax(self.conv5_1(x), dim=1)
         boxes = self.conv5_2(x)
         return probs, boxes    
 
