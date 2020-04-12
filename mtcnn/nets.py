@@ -8,6 +8,29 @@ import os
 
 WEIGHTS_PATH = os.path.dirname(os.path.abspath(__file__))+"/weights/"
 
+class FlattenTensorCustom(nn.Module):
+
+    def __init__(self):
+        
+        super(FlattenTensorCustom, self).__init__()
+
+    def forward(self, x):
+        """
+        Input:
+        
+        A Tensor x of shape [batch_no, c, h, w]
+
+        Output:
+
+        A Tensor x of shape [batch_no, c*h*w]        
+        """
+
+        x = x.transpose(3,2).contiguous() #wierd fix
+        
+        return x.view(x.size(0), -1)
+
+
+
 class PNet(nn.Module):
 
     
@@ -43,8 +66,8 @@ class PNet(nn.Module):
 
 
     def summary(self):
-        print(self.features)
-        print("-"*50)
+        print("PNet Summary:")
+        print(self.features)    
         print(self.conv4_1)
         print(self.conv4_2)
 
@@ -54,3 +77,53 @@ class PNet(nn.Module):
         boxes = self.conv4_2(x)
 
         return probs, boxes   
+
+class RNet(nn.Module):
+
+     
+    def __init__(self):
+         
+        super(RNet, self).__init__()
+
+        self.features = nn.Sequential(OrderedDict([
+            ("conv1", nn.Conv2d(3, 28, 3, 1)),
+            ("prelu1", nn.PReLU(28)),
+            ("pool1", nn.MaxPool2d(3, 2, ceil_mode=True)),
+
+            ("conv2", nn.Conv2d(28, 48, 3, 1)),
+            ("prelu2", nn.PReLU(48)),
+            ("pool2", nn.MaxPool2d(3, 2, ceil_mode=True)),
+
+            ("conv3", nn.Conv2d(48, 64, 2, 1)),
+
+            ("flatten", FlattenTensorCustom()),
+            ("conv4", nn.Linear(576, 128)),
+            ("prelu4", nn.PReLU(128)),      
+        ]))       
+
+        self.conv5_1 = nn.Linear(128, 2) #boxes
+        self.conv5_2 = nn.Linear(128, 4)
+
+        try:
+            self.weights = np.load(WEIGHTS_PATH+"rnet.npy", allow_pickle=True)[()]
+            for idx, wts in self.named_parameters():
+                wts.data = torch.FloatTensor(self.weights[idx])
+        except Exception as err:
+
+            print(Fore.RED+"ERROR: at loading onet weights: {}".format(err)+Fore.RESET)
+            exit()
+    
+    def summary(self):
+        print("RNet Summary:")
+        print(self.features)
+        print("\n")
+        print(self.conv5_1)
+        print(self.conv5_2)
+
+    def forward(x):
+        x = self.features(x)
+        prods = nn.Softmax(self.conv5_1(x))
+        boxes = self.conv5_2(x)
+        return probs, boxes    
+
+
