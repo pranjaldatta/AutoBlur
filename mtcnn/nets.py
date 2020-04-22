@@ -8,6 +8,7 @@ import os
 
 WEIGHTS_PATH = os.path.dirname(os.path.abspath(__file__))+"/weights/"
 
+
 class FlattenTensorCustom(nn.Module):
 
     def __init__(self):
@@ -30,10 +31,7 @@ class FlattenTensorCustom(nn.Module):
         return x.view(x.size(0), -1)
 
 
-
-class PNet(nn.Module):
-
-    
+class PNet(nn.Module):    
 
     def __init__(self):
 
@@ -73,10 +71,11 @@ class PNet(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        probs = nn.Softmax(self.conv4_1(x), dim=1) #ERROR PRONE  #holds probilities and box preds respec.
+        probs = F.softmax(self.conv4_1(x), dim=1) #ERROR PRONE  #holds probilities and box preds respec.
         boxes = self.conv4_2(x)
 
         return probs, boxes   
+
 
 class RNet(nn.Module):
 
@@ -120,11 +119,9 @@ class RNet(nn.Module):
         print(self.conv5_1)
         print(self.conv5_2)
 
-    def forward(x):
+    def forward(self, x):
         x = self.features(x)
-
-        probs = nn.Softmax(self.conv5_1(x), dim=1)
-
+        probs = F.softmax(self.conv5_1(x), dim=1)
         boxes = self.conv5_2(x)
         return probs, boxes    
 
@@ -178,9 +175,9 @@ class ONet(nn.Module):
         print(self.conv6_2)
         print(self.conv6_3)
 
-    def forward(x):
+    def forward(self, x):
         x = self.features(x)
-        probs = nn.Softmax(self.conv6_1(x), dim=1)
+        probs = F.softmax(self.conv6_1(x), dim=1)
         boxes = self.conv6_2(x)
         points = self.conv6_3(x)
         return probs, boxes, points   
