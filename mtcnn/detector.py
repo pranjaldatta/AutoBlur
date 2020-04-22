@@ -52,7 +52,7 @@ def detector(image, min_face_size = 20, threshold = 0.7 ):
     
     img_box = get_image_boxes(bounding_boxes,image,size=24)
     
-    img_box = Variable(torch.FloatTensor(img_box))
+    img_box = torch.tensor(img_box, requires_grad=True)
 
     probs,boxes = rnet(img_box)
     #print("After rnet: ")
