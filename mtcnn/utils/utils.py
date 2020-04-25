@@ -71,6 +71,26 @@ def preprocess(img):
     img = torch.tensor(img, dtype=torch.float32, requires_grad=False)
     img = img.permute(2,0,1)
     img = torch.unsqueeze(img, 0)
-    img = (img - 127.5)*0.0078125
+    img = (img - 127.5)*0.0078125  #normalize
     return img
     
+def convert_to_square(bbox):
+    """
+    Convert bounding boxes to square shape
+    
+    """
+
+    square = np.zeros((bbox.shape))
+
+    x1, y1, x2, y2 = [bbox[:, i] for i in range(4)]
+    h = y2 - y1 + 1.0
+    w = x2 - x1 + 1.0
+    max_side = np.maximum(h, w)
+
+    square[:,0] = x1 + w*0.5 - max_side*0.5
+    square[:,1] = y1 + h*0.5 - max_side*0.5
+    square[:, 2] = square[:, 0] + max_side - 1.0
+    square[:, 3] = square[:, 1] + max_side - 1.0
+
+    return square
+

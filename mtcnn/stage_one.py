@@ -20,7 +20,7 @@ def scale_boxes(probs, boxes, scale, thresh=.8):
     -> thresh: minimum confidence required for a facce to qualify
 
     Returns:
-    -> returns a float numpy array of shape [num_boxes, 9]
+    -> returns a float numpy array of shape [num_boxes, 9] #9 because bbox + confidence + offset (4+1+4)
     """
     stride = 2
     cell_size = 12
@@ -31,6 +31,7 @@ def scale_boxes(probs, boxes, scale, thresh=.8):
 
     tx1, ty1, tx2, ty2 = [boxes[0, i, inds[0], inds[1]] for i in range(4)]  
     offsets = np.array([tx1, ty1, tx2, ty2])
+
     confidence = probs[inds[0], inds[1]]
     
     #no clue whats happening
@@ -61,27 +62,33 @@ def first_stage(img, scale, pnet, thresh=.8):
        which contain box cords for a givens scale, confidence,
        and offsets to actual size
     """
-
+    
     orig_h, orig_w = img.size
     scaled_h, scaled_w = math.ceil(scale*orig_h), math.ceil(scale*orig_w)
-    img = img.resize((scaled_h, scaled_w), Image.BILINEAR)
     
+    img = img.resize((scaled_h, scaled_w), Image.BILINEAR)  
     img = preprocess(img)
+    
     probs, boxes = pnet(img)
-    probs = probs.data.numpy()[0,1,:,:]
+    
+    print("After pnet probs shape:")
+    print(probs.shape)
+    
+    probs = probs.data.numpy()[0,1,:,:] 
     boxes = boxes.data.numpy()
 
     bounding_boxes = scale_boxes(probs, boxes, scale)
-    selected_ids = nms(bounding_boxes[:,0:5]) #indices to be kept
-    
+    if len(bounding_boxes) == 0:
+        return None
+
+    selected_ids = nms(bounding_boxes[:,0:5]) #indices to be kept 
+
     return bounding_boxes[selected_ids]
 
-
-
-    
     
 """
 from nets import PNet
 pnet = PNet()
 first_stage(Image.open("/home/pranjal/Pictures/test.jpg"), .2,pnet,.8)
 """
+

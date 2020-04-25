@@ -119,12 +119,12 @@ class RNet(nn.Module):
         print(self.conv5_1)
         print(self.conv5_2)
 
-    def forward(x):
+    def forward(self, x):
+
         x = self.features(x)
-
         probs = F.softmax(self.conv5_1(x), dim=1)
-
         boxes = self.conv5_2(x)
+        
         return probs, boxes    
 
 
@@ -177,7 +177,7 @@ class ONet(nn.Module):
         print(self.conv6_2)
         print(self.conv6_3)
 
-    def forward(x):
+    def forward(self, x):
         x = self.features(x)
         probs = F.softmax(self.conv6_1(x), dim=1)
         boxes = self.conv6_2(x)
