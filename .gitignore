@@ -1,3 +1,5 @@
 .vscode/
 mtcnn/__pycache__
 mtcnn/utils/__pycache__
+mtcnn/utils/__pycache__
+clone/

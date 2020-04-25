@@ -6,7 +6,9 @@ import cv2
 from PIL import Image
 
 
-def scale_boxes(probs, boxes, scale, thresh=.7):
+
+
+def scale_boxes(probs, boxes, scale, thresh=.8):
     """
     A method that takes in the outputs of pnet, probabilities and 
     box cords for a scaled image and returns box cords for the 
@@ -24,7 +26,6 @@ def scale_boxes(probs, boxes, scale, thresh=.7):
     stride = 2
     cell_size = 12
     inds = np.where(probs > thresh)
-    
     if inds[0].size == 0:
         return np.array([])
 
@@ -80,5 +81,4 @@ def first_stage(img, scale, pnet, nms_thresh):
 
     selected_ids = nms(bounding_boxes[:,0:5], nms_thresh) #indices to be kept 
     return bounding_boxes[selected_ids]
-
-    
+   
