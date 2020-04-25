@@ -1,12 +1,13 @@
 import math
 import numpy as np  
 import torch
+from PIL import Image
 from utils.utils import preprocess, nms
 import cv2
-from PIL import Image
 
 
-def scale_boxes(probs, boxes, scale, thresh=.7):
+
+def scale_boxes(probs, boxes, scale, thresh=.8):
     """
     A method that takes in the outputs of pnet, probabilities and 
     box cords for a scaled image and returns box cords for the 
@@ -25,7 +26,6 @@ def scale_boxes(probs, boxes, scale, thresh=.7):
     cell_size = 12
 
     inds = np.where(probs > thresh)
-    
     if inds[0].size == 0:
         return np.array([])
 
@@ -82,7 +82,13 @@ def first_stage(img, scale, pnet, thresh=.8):
         return None
 
     selected_ids = nms(bounding_boxes[:,0:5]) #indices to be kept 
+
     return bounding_boxes[selected_ids]
 
-
+    
+"""
+from nets import PNet
+pnet = PNet()
+first_stage(Image.open("/home/pranjal/Pictures/test.jpg"), .2,pnet,.8)
+"""
 

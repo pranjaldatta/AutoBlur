@@ -93,3 +93,4 @@ def convert_to_square(bbox):
     square[:, 3] = square[:, 1] + max_side - 1.0
 
     return square
+
