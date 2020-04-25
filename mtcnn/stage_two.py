@@ -1,7 +1,7 @@
-from utils.utils import preprocess
+from .utils.utils import preprocess
 import numpy as np
 from PIL import Image
-from utils.visualize import show_boxes
+from .utils.visualize import show_boxes
 from colorama import Fore
 
 def get_image_boxes(bounding_boxes, img, size=24):
@@ -12,9 +12,7 @@ def get_image_boxes(bounding_boxes, img, size=24):
 
     num_boxes = len(bounding_boxes)
     w, h = img.size
-
     [dy, edy, dx, edx, y, ey, x, ex, tmpw, tmph] = pad(bounding_boxes, w, h)
- 
     img_boxes = np.zeros((num_boxes, 3, size, size), 'float32')
 
     for i in range(num_boxes):
@@ -28,7 +26,7 @@ def get_image_boxes(bounding_boxes, img, size=24):
             img_box[dy[i]:(edy[i] + 1), dx[i]:(edx[i] + 1), :] =\
                 img_array[y[i]:(ey[i] + 1), x[i]:(ex[i] + 1), :]
         except ValueError as ve:
-            print(Fore.RED+"Value error at index {}".format(i)+Fore.RESET)
+            print("Value error at index {}".format(i))
 
         img_box = Image.fromarray(img_box)
         img_box = img_box.resize((size, size), Image.BILINEAR)
@@ -53,9 +51,7 @@ def pad(bboxes, width, height):
     x, y, ex, ey = [bboxes[:, i] for i in range(4)]
     w, h = ex - x + 1.0,  ey - y + 1.0
     num_boxes = bboxes.shape[0]
-
     dx, dy = np.zeros((num_boxes,)), np.zeros((num_boxes,))
-
     edx, edy = w.copy() - 1.0, h.copy() - 1.0
 
     #For top left corner

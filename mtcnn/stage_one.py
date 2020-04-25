@@ -1,7 +1,7 @@
 import math
 import numpy as np  
 import torch
-from utils.utils import preprocess, nms
+from .utils.utils import preprocess, nms
 import cv2
 from PIL import Image
 
@@ -23,7 +23,6 @@ def scale_boxes(probs, boxes, scale, thresh=.7):
     """
     stride = 2
     cell_size = 12
-
     inds = np.where(probs > thresh)
     
     if inds[0].size == 0:
@@ -34,19 +33,19 @@ def scale_boxes(probs, boxes, scale, thresh=.7):
 
     confidence = probs[inds[0], inds[1]]
     
-    #no clue whats happening
     bboxes = np.vstack([
-        np.round((stride*inds[0] + 1.0)/scale),
         np.round((stride*inds[1] + 1.0)/scale),
-        np.round((stride*inds[0] + 1.0 + cell_size)/scale),
+        np.round((stride*inds[0] + 1.0)/scale),
         np.round((stride*inds[1] + 1.0 + cell_size)/scale),
+        np.round((stride*inds[0] + 1.0 + cell_size)/scale),
         confidence,
         offsets
         ])
+     
     return bboxes.T
 
 
-def first_stage(img, scale, pnet, thresh=.8):
+def first_stage(img, scale, pnet, nms_thresh):
     """
     A method that accepts a PIL Image, 
     runs it through pnet and does nms.
@@ -63,16 +62,14 @@ def first_stage(img, scale, pnet, thresh=.8):
        and offsets to actual size
     """
     
-    orig_h, orig_w = img.size
-    scaled_h, scaled_w = math.ceil(scale*orig_h), math.ceil(scale*orig_w)
+    orig_w, orig_h = img.size
+    scaled_w, scaled_h = math.ceil(scale*orig_w), math.ceil(scale*orig_h)
     
-    img = img.resize((scaled_h, scaled_w), Image.BILINEAR)  
+    img = img.resize((scaled_w, scaled_h), Image.BILINEAR)
     img = preprocess(img)
     
     probs, boxes = pnet(img)
     
-    print("After pnet probs shape:")
-    print(probs.shape)
     
     probs = probs.data.numpy()[0,1,:,:] 
     boxes = boxes.data.numpy()
@@ -81,8 +78,7 @@ def first_stage(img, scale, pnet, thresh=.8):
     if len(bounding_boxes) == 0:
         return None
 
-    selected_ids = nms(bounding_boxes[:,0:5]) #indices to be kept 
+    selected_ids = nms(bounding_boxes[:,0:5], nms_thresh) #indices to be kept 
     return bounding_boxes[selected_ids]
 
-
-
+    
