@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F  
 import numpy as np  
 from collections import OrderedDict
-from colorama import Fore
 import os
 
 WEIGHTS_PATH = os.path.dirname(os.path.abspath(__file__))+"/weights/"
@@ -41,7 +40,7 @@ class PNet(nn.Module):
             
             ("conv1", nn.Conv2d(3, 10, 3, 1)),
             ("prelu1", nn.PReLU(10)),
-            ("pool1", nn.MaxPool2d(3,2,ceil_mode=True)),
+            ("pool1", nn.MaxPool2d(2,2,ceil_mode=True)),
 
             ("conv2", nn.Conv2d(10, 16, 3, 1)),
             ("prelu2", nn.PReLU(16)),
@@ -59,7 +58,7 @@ class PNet(nn.Module):
             for idx, wts in self.named_parameters():
                 wts.data = torch.FloatTensor(self.weights[idx])
         except Exception as err:
-            print(Fore.RED+"ERROR: At Pnet Weight Init: {}".format(err)+Fore.RESET)
+            print("ERROR: At Pnet Weight Init: {}".format(err))
             exit()
 
 
@@ -109,7 +108,7 @@ class RNet(nn.Module):
                 wts.data = torch.FloatTensor(self.weights[idx])
         except Exception as err:
 
-            print(Fore.RED+"ERROR: at loading rnet weights: {}".format(err)+Fore.RESET)
+            print("ERROR: at loading rnet weights: {}".format(err))
             exit()
     
     def summary(self):
@@ -166,7 +165,7 @@ class ONet(nn.Module):
             for idx, wts in self.named_parameters():
                 wts.data = torch.FloatTensor(self.weights[idx])
         except Exception as err:
-            print(Fore.RED+"ERROR: at loading onet weights: {}".format(err)+Fore.RESET)
+            print("ERROR: at loading onet weights: {}".format(err))
             exit()
     
     def summary(self):
