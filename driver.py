@@ -5,7 +5,7 @@ import cv2
 import numpy as np  
 
 def sanity_check(prev, boxes):
-    """sanity check goes in here"""
+    """sanity check goes in here. working in it"""
 
 
 def pixelate(img, b):
@@ -46,7 +46,7 @@ def driver_func(path):
     while cap.isOpened():
         
         _, frame = cap.read()
-        if count < 400:
+        if count < 400: #just for the current video
             count += 1
             continue
 
