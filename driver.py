@@ -70,7 +70,7 @@ def driver_func(path):
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')    
     video_tracked = cv2.VideoWriter('video_tracked.avi', fourcc, 20.0, (h,w))
     for frame in frames_tracked:
-        video_tracked.write(cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR))
+        video_tracked.write(frame)
     video_tracked.release()
 
 
