@@ -1,11 +1,11 @@
 import numpy as np
 from PIL import Image
 import torch
-from .nets import PNet, RNet, ONet
-from .stage_one import first_stage
-from .stage_two import get_image_boxes
-from .utils.visualize import show_boxes
-from .utils.utils import nms, convert_to_square, calibrate_boxes
+from mtcnn.nets import PNet, RNet, ONet
+from mtcnn.stage_one import first_stage
+from mtcnn.stage_two import get_image_boxes
+from mtcnn.utils.visualize import show_boxes
+from mtcnn.utils.utils import nms, convert_to_square, calibrate_boxes
 
 
 
@@ -40,32 +40,38 @@ def detector(image, min_face_size = 20.0, conf_thresh=[0.7, 0.7, 0.8], nms_thres
     w, h = image.size
     min_length = min(h, w)
     min_detection_size = 12
-    
+    #print("W, h: ", str(w),str(h))
     scale_factor = 0.709   #not sure why its .709
     scales = []
     m = min_detection_size/min_face_size
     min_length *= m
     factor_count = 0
+    
     while min_length > min_detection_size:
         scales += [m * np.power(scale_factor,factor_count)]
         min_length *= scale_factor
         factor_count += 1
-   
+    #print("Scales: ", str(scales))
     ################## Stage 1 #############################
 
     bounding_boxes = []
 
     for s in scales:
         boxes = first_stage(image, s, pnet, nms_thresh[0])
+        #print("Boxes after stage len= {}".format(len(boxes)))
         bounding_boxes.append(boxes)   
     #bounding_boxes has shape [n_scales, n_boxes, 9]
-    
+    #print("BBoxes length before none thingy: ")
+    #print(len(bounding_boxes))
     
     #remove those scales for which bounding boxes were none
     bounding_boxes = [i for i in bounding_boxes if i is not None]
-     
-    
+    #print("BBoxes length: ")
+    #print(len(bounding_boxes))
     #Add all the boxes for each scale 
+    if len(bounding_boxes)==0:
+        return bounding_boxes
+    #if len(bounding_boxes)!=0:
     bounding_boxes = np.vstack(bounding_boxes)  # returns array of shape [n_boxes, 9]
 
     
