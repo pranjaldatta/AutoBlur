@@ -192,8 +192,8 @@ def driver_func(path, targpath = None, view = True, _max = -1):
         if key == ord('p'):
             if cv2.waitKey() == ord('p'):
                 continue
-
-    save_video(frame_list, height, width, targpath)      
+    if targpath is not None:
+        save_video(frame_list, height, width, targpath)      
     print("Time Taken to process %d frames is: %.2f"%(count, time.time()-start_time))
 
 
