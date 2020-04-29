@@ -1,11 +1,11 @@
 from mtcnn.detector import detector
-from blur import pixelate
+#from blur import pixelate
 from PIL import Image
 import cv2
 import numpy as np  
 
 def sanity_check(prev, boxes):
-    """sanity check goes in here"""
+    """sanity check goes in here. working in it"""
 
 
 def pixelate(img, b):
@@ -42,26 +42,37 @@ def draw_boxes(frame, prev, boxes):
 
 def driver_func(path):
     cap = cv2.VideoCapture(path)
+    w,h,_ = cap.read()[1].shape
     count = 0
+    frames_tracked = []
     while cap.isOpened():
         
         _, frame = cap.read()
-        if count < 400:
+
+        #w,h,_ = frame.shape
+        
+        if count < 100: #just for the current video
             count += 1
             continue
 
         b = detector(Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
-
+        
         if not isinstance(b, tuple):          
             b = np.array(b)
             frame = pixelate(frame, b)
-
+            
+        frames_tracked.append(frame)
         cv2.imshow("Frame", frame)
     
         if cv2.waitKey(1) == ord('q'):
             break
     
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')    
+    video_tracked = cv2.VideoWriter('video_tracked.avi', fourcc, 20.0, (h,w))
+    for frame in frames_tracked:
+        video_tracked.write(frame)
+    video_tracked.release()
 
 
-path = "videotest2.mp4"
+path = "news_test.mp4"
 driver_func(path)
