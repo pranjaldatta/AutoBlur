@@ -7,7 +7,9 @@ Blur faces in a video automatically.
 
 Often the need arises to blur/pixelate the faces of individuals in a video to protect their privacy. Often this is done in a manual fashion on a frame by frame basis. With AutoBlur, we leverage the power of deep learning to build something potentially useful and easy to use!
 
-## Insatallation
+Dont forget to read docs!
+
+## Installation
 
 **Note:** The default *master* branch comes with many demo videos. This increases the repository size unnecessarily. Hence, for a lighter implementation devoid of these videos, clone the *light* branch.
 
@@ -22,6 +24,10 @@ To get the *light* branch:
 ```
 git clone https://github.com/pranjaldatta/AutoBlur.git --single-branch --branch light
 ```
+
+## Usage
+
+For Usage, please check out pixel_demo.py
 
 ## Next Steps
 
