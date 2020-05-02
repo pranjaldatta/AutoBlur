@@ -40,17 +40,17 @@ def detector(image, min_face_size = 20.0, conf_thresh=[0.7, 0.7, 0.8], nms_thres
     w, h = image.size
     min_length = min(h, w)
     min_detection_size = 12
-    
     scale_factor = 0.709   #not sure why its .709
     scales = []
     m = min_detection_size/min_face_size
     min_length *= m
     factor_count = 0
+    
     while min_length > min_detection_size:
         scales += [m * np.power(scale_factor,factor_count)]
         min_length *= scale_factor
         factor_count += 1
-   
+
     ################## Stage 1 #############################
 
     bounding_boxes = []
@@ -60,12 +60,13 @@ def detector(image, min_face_size = 20.0, conf_thresh=[0.7, 0.7, 0.8], nms_thres
         bounding_boxes.append(boxes)   
     #bounding_boxes has shape [n_scales, n_boxes, 9]
     
-    
     #remove those scales for which bounding boxes were none
     bounding_boxes = [i for i in bounding_boxes if i is not None]
-     
-    
+
     #Add all the boxes for each scale 
+    if len(bounding_boxes)==0:
+        return bounding_boxes
+    
     bounding_boxes = np.vstack(bounding_boxes)  # returns array of shape [n_boxes, 9]
 
     
