@@ -20,7 +20,7 @@ git clone https://github.com/pranjaldatta/AutoBlur.git --single-branch --branch 
 To get the *light* branch:
 
 ```
-git clone https://github.com/pranjaldatta/AutoBlur.git --single-branch --branch master
+git clone https://github.com/pranjaldatta/AutoBlur.git --single-branch --branch light
 ```
 
 ## Next Steps
