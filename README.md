@@ -23,6 +23,10 @@ To get the *light* branch:
 git clone https://github.com/pranjaldatta/AutoBlur.git --single-branch --branch light
 ```
 
+## Usage
+
+For Usage, please check out [pixel_demo.py](https://github.com/pranjaldatta/AutoBlur/blob/master/pixel_demo.py)
+
 ## Next Steps
 
 Often the intention is to blur/pixelate out all faces except one or more particular faces. Hence, it would be a great feature if the user could be provided a GUI based interface wherein he can select faces to be **left out** of pixelation in real-time.
