@@ -1,5 +1,4 @@
 from mtcnn.detector import detector
-from blur import pixelate
 from PIL import Image
 import cv2
 import numpy as np  
@@ -216,8 +215,3 @@ def save_video(frame_list, h, w, path):
     video_tracked.release()
 
     return 
-
-"""
-path = "tests/videotest2.mp4"
-driver_func(path, targpath="tests/test1.avi", _max=500)
-"""
