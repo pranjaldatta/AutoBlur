@@ -5,7 +5,7 @@ from mtcnn.utils.visualize import show_boxes, _show_boxes
 from glob import glob
 
 
-a = [glob("tests/*.{}".format(s)) for s in ["jpg", "jpeg", "png"]]
+a = [glob("tests/images/*.{}".format(s)) for s in ["jpg", "jpeg", "png"]]
 imgs = [i for ai in a for i in ai]
 for img in imgs:
     img = Image.open(img)
