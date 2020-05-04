@@ -9,6 +9,10 @@ Often the need arises to blur/pixelate the faces of individuals in a video to pr
 
 Dont forget to read [docs](https://github.com/pranjaldatta/AutoBlur/blob/master/docs)!
 
+## Demo
+
+Check out the demo video [here](https://youtu.be/cfgmwlSqe98).
+
 ## Installation
 
 **Note:** The default *master* branch comes with many demo videos. This increases the repository size unnecessarily. Hence, for a lighter implementation devoid of these videos, clone the *light* branch.
